@@ -1,12 +1,11 @@
-import 'dart:ffi';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 import 'package:provider/provider.dart';
-import 'package:video_app/git.dart';
 import 'package:video_app/notifier.dart';
+import 'package:video_app/routes.dart';
 import 'package:video_app/size_config.dart';
 
 import 'colors.dart';
@@ -26,6 +25,7 @@ class MyApp extends StatelessWidget {
           SizeConfig().init(constraint, orientation);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            onGenerateRoute: Routes.generateRoute,
             theme: ThemeData(
               primaryColor: Colors.amber,
               canvasColor: scaffoldBackground,
@@ -49,6 +49,8 @@ class _DashboardState extends State<Dashboard> {
   double value = 0.0;
   double? initY;
 
+  bool data = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,18 +59,26 @@ class _DashboardState extends State<Dashboard> {
 
   SizeNotifier? _sizeNotifier;
 
-  _handleDrag(details) {
+  _handleDrag(DragStartDetails details) {
     //initX = details.globalPosition.dx;
     initY = details.globalPosition.dy;
-    value = initY!;
+
+    print("data:  " + initY.toString());
   }
 
-  _handleUpdate(details) {
+  _handleUpdate(DragUpdateDetails details) {
     // var dx = details.globalPosition.dx - initX;
-    var dy = details.globalPosition.dy - initY;
+    //var dy = details.delta.dy - initY;
     // initX = details.globalPosition.dx;
-    initY = details.globalPosition.dy;
-    _sizeNotifier!.updateSize(initY!);
+    value = details.globalPosition.dy - initY!;
+    print("======" + value.toString());
+    _sizeNotifier!.updateSize(value);
+  }
+
+  _handleEnd() {
+    setState(() {
+      data = !data;
+    });
   }
 
   @override
@@ -87,72 +97,131 @@ class _DashboardState extends State<Dashboard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Hi, George",style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700])),
-                        const Text("Dashboard",style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white)),
+                        Text("Hi, George",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.grey[600])),
+                        const Text("Dashboard",
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white)),
                       ],
                     ),
                     from: 250,
                   ),
-                  FadeInDown(child: const CircleAvatar(
+                  FadeInDown(
+                    child: const CircleAvatar(
                       radius: 28,
-                  ),
+                    ),
                     from: 250,
                   ),
                 ],
+              ), //Image.asset("assets/saly.png", fit: BoxFit.contain,)
+              FadeIn(
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.circular(24)),
+                  padding: const EdgeInsets.only(top: 16.0, right: 16, left: 16),
+                  child: Stack(
+                    children: [
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: Image.asset(
+                            "assets/saly.png",
+                            width: 250,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          )),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Monitor your\nexpenses",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: TextButton(
+                              onPressed: null,
+                              child: const Text("Get",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white)),
+                              style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0))),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(secondaryColor)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              FadeIn(child: Container(
-                height: 180,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(24)
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Stack(
-                  children: [
-                    Align(alignment: Alignment.topRight,child: element()),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Monitor your\nexpenses",
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white),
-                        ),
-                        Spacer(),
-                        TextButton(onPressed: null, child: Text("Get", style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white)), style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(secondaryColor)),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),),
               FlipInX(
                 child: ChangeNotifierProvider<SizeNotifier>(
                   create: (context) => _sizeNotifier!,
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      Container(
+                      GlassmorphicContainer(
                         height: 225,
                         width: double.infinity,
-                        color: Colors.red,
+                        borderRadius: 24,
+                        blur: 20,
+                        alignment: Alignment.bottomCenter,
+                        border: 0,
+                        linearGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF2D3235).withOpacity(0.9),
+                              Color(0xFF292D30).withOpacity(0.5),
+                            ],
+                            stops: const [
+                              0.1,
+                              1,
+                            ]),
+                        borderGradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFA8A8A8).withOpacity(1),
+                            Color(0xFFFFFFFF).withOpacity(0.5),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 28),
+                        height: 193,
+                        child: PageView(
+                          physics: const BouncingScrollPhysics(),
+                          children: <Widget>[
+                            CreditCard(Color(0xFF5859FA), Color(0xFF8CC8DC)),
+                            CreditCard(Color(0xFFC07021), Color(0xFFEEB40B)),
+                            CreditCard(Colors.lightGreenAccent, Colors.green),
+                          ],
+                        ),
                       ),
                       GestureDetector(
-                        onVerticalDragStart: _handleDrag,
-                        onVerticalDragUpdate: _handleUpdate,
+                        onVerticalDragStart: (d) => _handleDrag(d),
+                        onVerticalDragUpdate: (d) => _handleUpdate(d),
+                        onVerticalDragEnd: (d) => _handleEnd(),
                         child: Consumer<SizeNotifier>(
                             builder: (context, size, child) {
                           double val = 0.0;
@@ -167,14 +236,184 @@ class _DashboardState extends State<Dashboard> {
                           }
 
                           return AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            height: (val == 0.0)
-                                ? 225
-                                : val > 1.2
-                                    ? 112.5
-                                    : 225,
+                            duration: const Duration(milliseconds: 160),
+                            height: size.value > 50 ? 112.5 : 225,
                             width: double.infinity,
-                            color: Colors.grey,
+                            child: GlassmorphicContainer(
+                              height: 225,
+                              width: double.infinity,
+                              borderRadius: (size.value < 50) ? 24 : 16,
+                              blur: 20,
+                              alignment: Alignment.bottomCenter,
+                              border: 0,
+                              linearGradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    const Color(0xFFffffff).withOpacity(0.09),
+                                    const Color(0xFFFFFFFF).withOpacity(0.1),
+                                  ],
+                                  stops: const [
+                                    0.1,
+                                    1,
+                                  ]),
+                              borderGradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFFffffff).withOpacity(0.5),
+                                  const Color((0xFFFFFFFF)).withOpacity(0.5),
+                                ],
+                              ),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  children: [
+                                    touchElement(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: const [
+                                            Text(
+                                              "Balance",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey),
+                                            ),
+                                            Text("\$ 6,421.52",
+                                                style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.white)),
+                                          ],
+                                        ),
+                                        TextButton(
+                                          onPressed: null,
+                                          child: const Text("See more",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white)),
+                                          style: ButtonStyle(
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12.0))),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      secondaryColor)),
+                                        )
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: AnimatedOpacity(
+                                        opacity: size.value > 50 ? 0 : 1,
+                                        duration:
+                                            const Duration(milliseconds: 100),
+                                        child: ListView(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          children: [
+                                            const SizedBox(
+                                              height: 16,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: const [
+                                                Text("23 March",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.grey)),
+                                                Text("\$813",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.grey)),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 16,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  height: 44,
+                                                  width: 44,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xFF2B2F33),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0)),
+                                                  child: const Icon(
+                                                    Icons.animation,
+                                                    color: Colors.white60,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: const [
+                                                      Text("ATM, 375 Canal St",
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color: Colors
+                                                                  .white)),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+                                                      Text("Cash withdrawal",
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  Colors.grey)),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const Text("-\$ 300",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: Colors.white)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
                           );
                         }),
                       ),
@@ -185,7 +424,9 @@ class _DashboardState extends State<Dashboard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: SlideInLeft(child: const StatCard(
+                  Expanded(
+                      child: SlideInLeft(
+                          child: const StatCard(
                     title: "Profit",
                     month: "Feb",
                     percentage: "53.2%",
@@ -193,7 +434,9 @@ class _DashboardState extends State<Dashboard> {
                   const SizedBox(
                     width: 32,
                   ),
-                  Expanded(child: SlideInRight(child: const StatCard(
+                  Expanded(
+                      child: SlideInRight(
+                          child: const StatCard(
                     title: "Debt",
                     month: "Mar",
                     percentage: "53.2%",
@@ -203,18 +446,31 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: const FloatingActionButton(
-          backgroundColor: secondaryColor,
-          onPressed: null,
-        ),
-        bottomNavigationBar: BottomAppBar(
-          child: Container(
-            height: 72,
-            width: double.infinity,
-            color: scaffoldBackground,
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButton: const FloatingActionButton(
+        //   backgroundColor: secondaryColor,
+        //   onPressed: null,
+        // ),
+        // bottomNavigationBar: BottomAppBar(
+        //   child: Container(
+        //     height: 72,
+        //     width: double.infinity,
+        //     color: scaffoldBackground,
+        //   ),
+        // ),
+      ),
+    );
+  }
+
+  Widget touchElement() {
+    return Opacity(
+      opacity: 0.4,
+      child: Container(
+        margin: EdgeInsets.all(10.0),
+        height: 4,
+        width: 38,
+        decoration: BoxDecoration(
+            color: Colors.grey, borderRadius: BorderRadius.circular(5)),
       ),
     );
   }
@@ -331,3 +587,16 @@ class StatCard extends StatelessWidget {
     );
   }
 }
+
+/**
+    // decoration: BoxDecoration(
+    //   borderRadius: (val < 1.2)
+    //       ? BorderRadius.circular(24)
+    //       : const BorderRadius.only(
+    //           topLeft: Radius.circular(0),
+    //           topRight: Radius.circular(0),
+    //           bottomLeft: Radius.circular(24),
+    //           bottomRight: Radius.circular(24),
+    //         ),
+    // ),
+ * */
