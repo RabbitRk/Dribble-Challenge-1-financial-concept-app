@@ -2,13 +2,16 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:provider/provider.dart';
+import 'package:video_app/detail.dart';
 import 'package:video_app/notifier.dart';
 import 'package:video_app/routes.dart';
 import 'package:video_app/size_config.dart';
 
 import 'colors.dart';
+import 'git.dart';
 
 void main() {
   runApp(const MyApp());
@@ -126,7 +129,8 @@ class _DashboardState extends State<Dashboard> {
                   decoration: BoxDecoration(
                       color: cardColor,
                       borderRadius: BorderRadius.circular(24)),
-                  padding: const EdgeInsets.only(top: 16.0, right: 16, left: 16),
+                  padding:
+                      const EdgeInsets.only(top: 16.0, right: 16, left: 16),
                   child: Stack(
                     children: [
                       Align(
@@ -163,8 +167,8 @@ class _DashboardState extends State<Dashboard> {
                                       RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(12.0))),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(secondaryColor)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      secondaryColor)),
                             ),
                           )
                         ],
@@ -206,15 +210,20 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 28),
-                        height: 193,
+                      SizedBox(
+                        height: 225,
                         child: PageView(
                           physics: const BouncingScrollPhysics(),
-                          children: <Widget>[
-                            CreditCard(Color(0xFF5859FA), Color(0xFF8CC8DC)),
-                            CreditCard(Color(0xFFC07021), Color(0xFFEEB40B)),
-                            CreditCard(Colors.lightGreenAccent, Colors.green),
+                          children: const [
+                            CreditCard(
+                                smallColor: Color(0xFF5859FA),
+                                bigColor: Color(0xFF8CC8DC)),
+                            CreditCard(
+                                smallColor: Color(0xFFC07021),
+                                bigColor: Color(0xFFEEB40B)),
+                            CreditCard(
+                                smallColor: Colors.lightGreenAccent,
+                                bigColor: Colors.green),
                           ],
                         ),
                       ),
@@ -464,13 +473,13 @@ class _DashboardState extends State<Dashboard> {
 
   Widget touchElement() {
     return Opacity(
-      opacity: 0.4,
+      opacity: 0.5,
       child: Container(
-        margin: EdgeInsets.all(10.0),
+        margin: const EdgeInsets.all(10.0),
         height: 4,
         width: 38,
         decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(5)),
+            color: Colors.white, borderRadius: BorderRadius.circular(5)),
       ),
     );
   }
@@ -529,8 +538,7 @@ class StatCard extends StatelessWidget {
                       color: Colors.grey),
                 ),
               ),
-
-              Container(
+              SizedBox(
                 height: 32,
                 child: Row(
                   children: [
@@ -541,45 +549,22 @@ class StatCard extends StatelessWidget {
                         itemCount: 3,
                         itemBuilder: (context, index) {
                           return Align(
-                            widthFactor: 0.8,
+                            widthFactor: 0.6,
                             alignment: Alignment.topCenter,
                             child: Container(
-                              height: 30,
-                              width: 30,
+                              height: 36,
+                              width: 36,
                               decoration: BoxDecoration(
                                   color: Colors.red,
                                   shape: BoxShape.circle,
                                   border:
-                                      Border.all(color: cardColor, width: 2.0)),
+                                      Border.all(color: cardColor, width: 3.0)),
                             ),
                           );
                         }),
                   ],
                 ),
               ),
-
-              // Stack(
-              //   children: [
-              //     Container(height: 30, width: 30, decoration: BoxDecoration(
-              //       color: Colors.red,
-              //       shape: BoxShape.circle,
-              //       border: Border.all(
-              //         color: cardColor,
-              //         width: 2.0
-              //       )
-              //     ),
-              //     ),
-              //     Container(height: 30, width: 30, decoration: BoxDecoration(
-              //         color: Colors.red,
-              //         shape: BoxShape.circle,
-              //         border: Border.all(
-              //             color: cardColor,
-              //             width: 2.0
-              //         )
-              //     ),
-              //     ),
-              //   ],
-              // )
             ],
           ),
         ],
@@ -588,15 +573,89 @@ class StatCard extends StatelessWidget {
   }
 }
 
-/**
-    // decoration: BoxDecoration(
-    //   borderRadius: (val < 1.2)
-    //       ? BorderRadius.circular(24)
-    //       : const BorderRadius.only(
-    //           topLeft: Radius.circular(0),
-    //           topRight: Radius.circular(0),
-    //           bottomLeft: Radius.circular(24),
-    //           bottomRight: Radius.circular(24),
-    //         ),
-    // ),
- * */
+class CreditCard extends StatelessWidget {
+  final Color smallColor, bigColor;
+
+  const CreditCard({Key? key, required this.smallColor, required this.bigColor})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onPanUpdate: (pu) {
+        if (pu.delta.dy < 0) {
+          Navigator.pushNamed(context, Routes.CardDetail_,
+              arguments: {"smallColor": smallColor, "bigColor": bigColor});
+        }
+      },
+      child: Hero(
+        tag: "card",
+        child: Container(
+          padding: const EdgeInsets.all(24.0),
+          child: Stack(
+            children: [
+              Positioned(
+                  left: 0,
+                  top: 50,
+                  child: Circles(diameter: 120, color: smallColor)),
+              Positioned(
+                  right: 0,
+                  top: -50,
+                  child: Circles(diameter: 200, color: bigColor)),
+              GlassmorphicContainer(
+                height: 193,
+                width: double.infinity,
+                borderRadius: 14,
+                blur: 30,
+                alignment: Alignment.bottomCenter,
+                border: 0.5,
+                linearGradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFffffff).withOpacity(0.1),
+                      Color(0xFFFFFFFF).withOpacity(0.1),
+                    ],
+                    stops: const [
+                      0.1,
+                      1,
+                    ]),
+                borderGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFffffff).withOpacity(0.5),
+                    Color(0xFFFFFFFF).withOpacity(0.5),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset(
+                      "assets/visa.svg",
+                      height: 18,
+                    ),
+                    const SizedBox(height: 8),
+                    const Material(
+                      color: Colors.transparent,
+                      child: Text(
+                        "**** **** **** 6584",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

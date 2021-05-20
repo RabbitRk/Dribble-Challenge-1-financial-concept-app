@@ -20,7 +20,10 @@ class Routes {
       case Root:
         return MaterialPageRoute(builder: (context) => Dashboard());
       case CardDetail_:
-        return SlideTopRoute(page: CardDetail());
+        return SlideTopRoute(
+            page: CardDetail(
+                smallColor: args["smallColor"],
+                bigColor: args["bigColor"]));
       default:
         return _errorRoute();
     }

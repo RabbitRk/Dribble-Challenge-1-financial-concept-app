@@ -1,21 +1,28 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:video_app/git.dart';
 
 import 'colors.dart';
 
 class CardDetail extends StatefulWidget {
+
+  final Color smallColor, bigColor;
+
+  const CardDetail({Key? key, required this.smallColor, required this.bigColor}) : super(key: key);
+
   @override
   _CardDetailState createState() => _CardDetailState();
 }
 
 class _CardDetailState extends State<CardDetail> with TickerProviderStateMixin {
-  Color smallColor = Color(0xFF5859FA);
-  Color bigColor = Color(0xFF8CC8DC);
 
   AnimationController? _controller;
-  Tween<double> _tween = Tween(begin: 0.8, end: 1);
+  final Tween<double> _tween = Tween(begin: 0.9, end: 1);
+
+  int cvv = 1;
+  bool animate = false;
 
   @override
   void initState() {
@@ -39,46 +46,177 @@ class _CardDetailState extends State<CardDetail> with TickerProviderStateMixin {
               SizedBox(
                   height: MediaQuery.of(context).size.height * 0.3,
                   width: double.infinity),
-              const AnimatedPositioned(
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.elasticIn,
+              Positioned(
                   bottom: 0,
-                  child: Circles(diameter: 180, color: Color(0xFF5859FA))),
-              const Positioned(
+                  child: Circles(diameter: 180, color: widget.smallColor)),
+              Positioned(
                   right: 0,
-                  child: Circles(diameter: 200, color: Color(0xFF8CC8DC))),
+                  child: Circles(diameter: 200, color: widget.bigColor)),
               Hero(
                 tag: "card",
                 child: Material(
                   color: Colors.transparent,
-                  child: GlassmorphicContainer(
-                    height: 193,
-                    margin: const EdgeInsets.only(
-                        top: 50, left: 16, right: 16, bottom: 50),
-                    width: double.infinity,
-                    borderRadius: 14,
-                    blur: 40,
-                    alignment: Alignment.bottomCenter,
-                    border: 0.5,
-                    linearGradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFFffffff).withOpacity(0.1),
-                          Color(0xFFFFFFFF).withOpacity(0.1),
-                        ],
-                        stops: const [
-                          0.1,
-                          1,
-                        ]),
-                    borderGradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFFffffff).withOpacity(0.5),
-                        Color(0xFFFFFFFF).withOpacity(0.5),
-                      ],
-                    ),
+                  child: Stack(
+                    children: [
+                      GlassmorphicContainer(
+                        height: 224,
+                        margin: const EdgeInsets.only(
+                            top: 50, left: 16, right: 16, bottom: 50),
+                        width: double.infinity,
+                        borderRadius: 14,
+                        blur: 40,
+                        alignment: Alignment.bottomCenter,
+                        border: 0.5,
+                        linearGradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              const Color(0xFFffffff).withOpacity(0.1),
+                              const Color(0xFFFFFFFF).withOpacity(0.1),
+                            ],
+                            stops: const [
+                              0.1,
+                              1,
+                            ]),
+                        borderGradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFffffff).withOpacity(0.5),
+                            const Color(0xFFFFFFFF).withOpacity(0.5),
+                          ],
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/visa.svg",
+                                height: 18,
+                              ),
+                              const SizedBox(height: 24),
+                              const Material(
+                                color: Colors.transparent,
+                                child: Text(
+                                  "**** **** **** 6584",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
+                                ),
+                              ),
+                              const Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Expanded(
+                                     child:  Material(
+                                      color: Colors.transparent,
+                                      child: Text(
+                                        "06/22",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white),
+                                      ),
+                                  ),
+                                   ),
+                                  IndexedStack(
+                                    index: cvv,
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: FadeIn(
+                                          controller: (cc){
+
+                                          },
+                                          animate: animate,
+                                          manualTrigger: true,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Text(
+                                                "CVV",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                "461",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      ScaleTransition(
+                                          scale: _tween.animate(CurvedAnimation(
+                                              parent: _controller!, curve: Curves.ease)),
+                                          alignment: Alignment.center,
+                                          child: GestureDetector(
+                                              onTapDown: (a) {
+                                                _controller!.reverse();
+                                              },
+                                              onTapUp: (a) {
+                                                _controller!.forward();
+                                                setState(() {
+                                                  cvv = 0;
+                                                  animate = true;
+                                                });
+                                              },
+                                              child:  GlassmorphicContainer(
+                                                height: 40,
+                                                width: 80,
+                                                borderRadius: 4,
+                                                blur: 20,
+                                                alignment: Alignment.bottomCenter,
+                                                border: 0.5,
+                                                linearGradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      const Color(0xFF000000).withOpacity(0.2),
+                                                      const Color(0xFF000000).withOpacity(0.1),
+                                                    ],
+                                                    stops: const [
+                                                      0.1,
+                                                      1,
+                                                    ]),
+                                                borderGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFFffffff).withOpacity(0.5),
+                                                    const Color(0xFFFFFFFF).withOpacity(0.5),
+                                                  ],
+                                                ),
+                                                child: const Center(
+                                                  child: Text("Show CVV",
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: Colors.white)
+                                                  ),
+                                                ),
+                                              )
+                                          ))
+
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    ],
                   ),
                 ),
               ),
@@ -186,7 +324,7 @@ class BalanceCard extends StatelessWidget {
                 color: Colors.grey[600]),
           ),
           const SizedBox(
-            height: 4,
+            height: 8,
           ),
           Text(
             percentage,
