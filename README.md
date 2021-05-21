@@ -6,7 +6,7 @@ This project is a personal skill development on converting a design into the pix
 
 Credits:
 
-- [Dribble - Financial concept app](https://dribbble.com/shots/15668611-Fintech-Dark-Theme)
+- [Dribbble - Financial concept app](https://dribbble.com/shots/15668611-Fintech-Dark-Theme)
 - [Animations - Animate.do](https://pub.dev/packages/animate_do)
 - [Glassmorphism](https://pub.dev/packages/glassmorphism)
 
