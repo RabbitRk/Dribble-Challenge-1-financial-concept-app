@@ -1,8 +1,6 @@
 # Financial concept app from Dribbble
 
-Design Challenge 1.
-
-## Getting Started
+## Design Challenge 1.
 
 This project is a personal skill development on converting a design into the pixel perfect Flutter apps.
 
@@ -12,6 +10,6 @@ Credits:
 - [Animations - Animate.do](https://pub.dev/packages/animate_do)
 - [Glassmorphism](https://pub.dev/packages/glassmorphism)
 
-For help getting started with Flutter, view our
+For help getting started with Flutter, view the
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
