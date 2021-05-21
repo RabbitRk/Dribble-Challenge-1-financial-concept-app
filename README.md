@@ -1,15 +1,16 @@
-# video_app
+# Financial concept app from Dribbble
 
-A new Flutter application.
+Design Challenge 1.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a personal skill development on converting a design into the pixel perfect Flutter apps.
 
-A few resources to get you started if this is your first Flutter project:
+Credits:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- [Dribble - Financial concept app](https://dribbble.com/shots/15668611-Fintech-Dark-Theme)
+- [Animations - Animate.do](https://pub.dev/packages/animate_do)
+- [Glassmorphism](https://pub.dev/packages/glassmorphism)
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
